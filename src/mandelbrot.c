@@ -9,7 +9,6 @@
 #define WINDOW_HEIGHT 600
 #define MAX_ITERATIONS 150
 
-// Mandelbrot setini hesaplayan fonksiyon
 int mandelbrot(Complex c) {
     Complex z = {0.0, 0.0};
     int i;
@@ -28,7 +27,6 @@ int mandelbrot(Complex c) {
     return MAX_ITERATIONS;
 }
 
-// Julia setini hesaplayan fonksiyon
 int julia(Complex z, Complex c) {
     int i;
     for (i = 0; i < MAX_ITERATIONS; i++) {
@@ -45,9 +43,8 @@ int julia(Complex z, Complex c) {
     return MAX_ITERATIONS;
 }
 
-// Ekranı çizen fonksiyon
 void render(SDL_Renderer* renderer, ViewPort view, int is_julia, Complex julia_c) {
-    // Koyu mavi arka plan
+    
     SDL_SetRenderDrawColor(renderer, 0, 0, 50, 255);
     SDL_RenderClear(renderer);
     
@@ -64,17 +61,17 @@ void render(SDL_Renderer* renderer, ViewPort view, int is_julia, Complex julia_c
                 iterations = mandelbrot(c);
             
             if (iterations == MAX_ITERATIONS) {
-                // Set içindeki noktalar siyah
+                
                 SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
             } else {
-                // Set dışındaki noktalar için mavi tonları
+                
                 double t = (double)iterations / MAX_ITERATIONS;
                 t = 0.5 + 0.5 * cos(log(t + 0.0001) * 3.0);
                 
-                // Mavi tonları için
-                int r = (int)(255 * t * 0.2);  // Çok az kırmızı
-                int g = (int)(255 * t * 0.4);  // Biraz yeşil
-                int b = (int)(255 * t);        // Tam mavi
+                
+                int r = (int)(255 * t * 0.2);  
+                int g = (int)(255 * t * 0.4);  
+                int b = (int)(255 * t);        
                 
                 SDL_SetRenderDrawColor(renderer, r, g, b, 255);
             }
@@ -113,7 +110,6 @@ int main(int argc, char *argv[]) {
     int is_julia = 0;
     Complex julia_c = {0, 0};
     
-    // FPS kontrolü için değişkenler
     const int FPS = 60;
     const int FRAME_DELAY = 1000 / FPS;
     Uint32 frame_start;
@@ -127,7 +123,7 @@ int main(int argc, char *argv[]) {
         
         SDL_Event event;
         while (SDL_PollEvent(&event)) {
-            // UI event'lerini işle
+
             if (handle_ui_event(&ui, event, &view)) {
                 continue;
             }
@@ -152,14 +148,13 @@ int main(int argc, char *argv[]) {
             }
         }
         
-        SDL_SetRenderDrawColor(renderer, 0, 0, 50, 255);  // Koyu mavi
+        SDL_SetRenderDrawColor(renderer, 0, 0, 50, 255);  
         SDL_RenderClear(renderer);
         
         render(renderer, view, is_julia, julia_c);
         render_ui(&ui, renderer, view, julia_c, is_julia);
-        SDL_RenderPresent(renderer);  // Ekranı güncelle
+        SDL_RenderPresent(renderer);  
         
-        // FPS kontrolü
         frame_time = SDL_GetTicks() - frame_start;
         if (frame_time < FRAME_DELAY) {
             SDL_Delay(FRAME_DELAY - frame_time);
