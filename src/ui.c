@@ -15,7 +15,6 @@ void render_text(SDL_Renderer* renderer, TTF_Font* font, const char* text, SDL_R
     SDL_Surface* surface = TTF_RenderText_Blended(font, text, color);
     SDL_Texture* texture = SDL_CreateTextureFromSurface(renderer, surface);
     
-    // Metni butonun ortasına yerleştir
     SDL_Rect text_rect = {
         rect->x + (rect->w - surface->w) / 2,
         rect->y + (rect->h - surface->h) / 2,
@@ -29,7 +28,7 @@ void render_text(SDL_Renderer* renderer, TTF_Font* font, const char* text, SDL_R
 }
 
 void render_julia_preview(UI* ui, SDL_Renderer* renderer, ViewPort view, Complex julia_c) {
-    // Preview için özel viewport oluştur
+
     ViewPort preview_view = {
         .x_min = -1.5,
         .x_max = 1.5,
@@ -37,8 +36,7 @@ void render_julia_preview(UI* ui, SDL_Renderer* renderer, ViewPort view, Complex
         .y_max = 1.5,
         .zoom = 1.0
     };
-    
-    // Preview'ı render et
+
     SDL_SetRenderTarget(renderer, ui->preview_texture);
     SDL_SetRenderDrawColor(renderer, 0, 0, 0, 255);
     SDL_RenderClear(renderer);
@@ -71,28 +69,22 @@ void render_julia_preview(UI* ui, SDL_Renderer* renderer, ViewPort view, Complex
 }
 
 void init_ui(UI* ui, SDL_Renderer* renderer) {
-    // Reset butonu (sol üst köşe)
     ui->reset_button = (SDL_Rect){UI_PADDING, UI_PADDING, BUTTON_WIDTH, BUTTON_HEIGHT};
     
-    // Julia preview butonu (reset butonunun altı)
     ui->julia_preview_button = (SDL_Rect){UI_PADDING, UI_PADDING * 2 + BUTTON_HEIGHT, 
                                         BUTTON_WIDTH, BUTTON_HEIGHT};
     
-    // Julia preview penceresi (sağ üst köşe)
     ui->julia_preview_window = (SDL_Rect){WINDOW_WIDTH - PREVIEW_SIZE - UI_PADDING,
                                         UI_PADDING, PREVIEW_SIZE, PREVIEW_SIZE};
     
-    // Zoom göstergesi (julia preview butonunun altı)
     ui->zoom_display = (SDL_Rect){UI_PADDING, UI_PADDING * 3 + BUTTON_HEIGHT * 2,
                                  BUTTON_WIDTH, BUTTON_HEIGHT};
     
     ui->show_julia_preview = 0;
     
-    // Preview texture oluştur
     ui->preview_texture = SDL_CreateTexture(renderer, SDL_PIXELFORMAT_RGBA8888,
                                           SDL_TEXTUREACCESS_TARGET, PREVIEW_SIZE, PREVIEW_SIZE);
     
-    // TTF başlat
     TTF_Init();
     ui->font = TTF_OpenFont("C:/Windows/Fonts/arial.ttf", FONT_SIZE);
     if (!ui->font) {
@@ -103,19 +95,16 @@ void init_ui(UI* ui, SDL_Renderer* renderer) {
 void render_ui(UI* ui, SDL_Renderer* renderer, ViewPort view, Complex julia_c, int is_julia) {
     SDL_SetRenderDrawBlendMode(renderer, SDL_BLENDMODE_BLEND);
     
-    // Butonların arka planı
     SDL_SetRenderDrawColor(renderer, 60, 60, 60, UI_ALPHA);
     SDL_RenderFillRect(renderer, &ui->reset_button);
     SDL_RenderFillRect(renderer, &ui->julia_preview_button);
     SDL_RenderFillRect(renderer, &ui->zoom_display);
     
-    // Buton çerçeveleri ve metinleri için beyaz renk
     SDL_SetRenderDrawColor(renderer, 255, 255, 255, UI_ALPHA);
     SDL_RenderDrawRect(renderer, &ui->reset_button);
     SDL_RenderDrawRect(renderer, &ui->julia_preview_button);
     SDL_RenderDrawRect(renderer, &ui->zoom_display);
     
-    // Buton metinleri
     if (ui->font) {
         render_text(renderer, ui->font, "Reset", &ui->reset_button);
         render_text(renderer, ui->font, "Julia Preview", &ui->julia_preview_button);
@@ -140,7 +129,6 @@ int handle_ui_event(UI* ui, SDL_Event event, ViewPort* view) {
         int x = event.button.x;
         int y = event.button.y;
         
-        // Reset butonuna tıklandı mı?
         if (SDL_PointInRect(&(SDL_Point){x, y}, &ui->reset_button)) {
             view->x_min = -2.0;
             view->x_max = 1.0;
@@ -150,7 +138,6 @@ int handle_ui_event(UI* ui, SDL_Event event, ViewPort* view) {
             return 1;
         }
         
-        // Julia preview butonuna tıklandı mı?
         if (SDL_PointInRect(&(SDL_Point){x, y}, &ui->julia_preview_button)) {
             ui->show_julia_preview = !ui->show_julia_preview;
             return 1;
